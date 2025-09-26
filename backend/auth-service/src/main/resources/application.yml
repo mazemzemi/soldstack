@@ -1,0 +1,7 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: auth-service
+jwt:
+  secret: c29sZHN0YWNrLWJhY2tlbmQtYXV0aGVudGlmaWNhdGlvbi1zZXJ2aWNlLXNlY3JldC1rZXk=

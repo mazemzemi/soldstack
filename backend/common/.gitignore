@@ -1,0 +1,70 @@
+# ===================================================================
+# Fichiers de Log et de Configuration Locale
+# ===================================================================
+# Fichiers de log
+*.log
+
+# Fichiers d'environnement (ne jamais versionner les secrets !)
+.env
+*.env.local
+
+# ===================================================================
+# Build & Dépendances (Gradle)
+# ===================================================================
+# Répertoire de cache spécifique au projet Gradle
+.gradle/
+
+# Répertoire de sortie de build Gradle
+build/
+
+# Fichiers générés par Gradle
+!gradle/wrapper/gradle-wrapper.jar
+.gradletasknamecache
+gradle-app.setting
+
+# ===================================================================
+# Fichiers des IDEs
+# ===================================================================
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+.nb-gradle/
+
+# VS Code
+.vscode/
+
+# ===================================================================
+# Fichiers générés par le Système d'Exploitation
+# ===================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===================================================================
+# Archives et Fichiers Compilés
+# ===================================================================
+*.jar
+*.war
+*.ear
+*.class
