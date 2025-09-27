@@ -1,15 +1,16 @@
-package com.mazemzemi.soldstack.auth.interfaces;
+package com.mazemzemi.soldstack.auth.presentation;
 
 import com.mazemzemi.soldstack.auth.application.AuthService;
 import com.mazemzemi.soldstack.auth.domain.model.User;
-import com.mazemzemi.soldstack.auth.interfaces.dto.request.LoginRequest;
-import com.mazemzemi.soldstack.auth.interfaces.dto.request.RegisterRequest;
-import com.mazemzemi.soldstack.auth.interfaces.dto.response.AuthResponse;
-import com.mazemzemi.soldstack.auth.interfaces.dto.response.UserResponse;
+import com.mazemzemi.soldstack.auth.presentation.dto.request.LoginRequest;
+import com.mazemzemi.soldstack.auth.presentation.dto.request.RegisterRequest;
+import com.mazemzemi.soldstack.auth.presentation.dto.response.AuthResponse;
+import com.mazemzemi.soldstack.auth.presentation.dto.response.UserResponse;
 import com.mazemzemi.soldstack.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -46,10 +47,27 @@ public class AuthController {
     }
 
     /**
+     * Endpoint pour récupérer les informations de l'utilisateur actuellement authentifié.
+     * Nécessite un token JWT valide dans l'en-tête "Authorization".
+     */
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser(Authentication authentication) {
+        // Le nom du principal est l'email de l'utilisateur, défini par notre filtre JWT.
+        String email = authentication.getName();
+        User currentUser = authService.getUserByEmail(email);
+
+        // Mapper vers le DTO de réponse pour ne pas exposer les données sensibles.
+        UserResponse userResponse = new UserResponse(currentUser.getId(), currentUser.getUsername(), currentUser.getEmail());
+
+        return ResponseEntity.ok(ApiResponse.success(userResponse, "Current user data retrieved successfully."));
+    }
+
+    /**
      * Endpoint pour la déconnexion.
      */
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<Void>> logout(@RequestParam String email) {
+    public ResponseEntity<ApiResponse<Void>> logout(Authentication authentication) {
+        String email = authentication.getName();
         authService.logout(email);
         return ResponseEntity.ok(ApiResponse.success(null, "Logged out successfully."));
     }

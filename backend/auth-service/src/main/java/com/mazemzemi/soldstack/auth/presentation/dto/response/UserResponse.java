@@ -1,4 +1,4 @@
-package com.mazemzemi.soldstack.auth.interfaces.dto.response;
+package com.mazemzemi.soldstack.auth.presentation.dto.response;
 
 public record UserResponse(Long id, String username, String email) {
 }

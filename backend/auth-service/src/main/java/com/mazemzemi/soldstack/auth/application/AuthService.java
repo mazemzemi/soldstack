@@ -81,10 +81,15 @@ public class AuthService {
         return userRepository.save(newUser);
     }
 
-    public boolean validate(String email, String token) {
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User", email));
+    }
+
+   /* public boolean validate(String email, String token) {
         String storedToken = tokenStore.getToken(email);
         return storedToken != null && storedToken.equals(token);
-    }
+    }*/
 
     public void logout(String email) {
         tokenStore.removeToken(email);

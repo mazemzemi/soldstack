@@ -56,7 +56,7 @@ class AuthServiceTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals("testuser", result.getUsername());
+        assertEquals("test@example.com", result.getUsername());
         assertEquals("encodedPassword", result.getPassword());
         verify(userRepository, times(1)).save(any(User.class));
     }
@@ -117,5 +117,35 @@ class AuthServiceTest {
             authService.login("test@example.com", "wrongpassword");
         });
         verify(tokenStore, never()).storeToken(anyString(), anyString(), anyLong());
+    }
+
+    // Dans la classe AuthServiceTest
+
+    @Test
+    @DisplayName("getUserByEmail should return user when found")
+    void getUserByEmail_shouldReturnUser_whenFound() {
+        // Arrange
+        User user = User.builder().email("found@example.com").username("foundUser").build();
+        when(userRepository.findByEmail("found@example.com")).thenReturn(Optional.of(user));
+
+        // Act
+        User result = authService.getUserByEmail("found@example.com");
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("found@example.com", result.getEmail());
+        assertEquals("found@example.com", result.getUsername());
+    }
+
+    @Test
+    @DisplayName("getUserByEmail should throw NotFoundException when user not found")
+    void getUserByEmail_shouldThrowNotFoundException_whenNotFound() {
+        // Arrange
+        when(userRepository.findByEmail("notfound@example.com")).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NotFoundException.class, () -> {
+            authService.getUserByEmail("notfound@example.com");
+        });
     }
 }

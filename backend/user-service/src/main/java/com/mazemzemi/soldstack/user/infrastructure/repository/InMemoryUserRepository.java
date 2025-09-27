@@ -21,6 +21,11 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> findByEmail(String email) {
+        return Optional.ofNullable(storage.get(email));
+    }
+
+    @Override
     public List<User> findAll() {
         return new ArrayList<>(storage.values());
     }
