@@ -72,6 +72,10 @@ jobs:
   # --- Stage 2 : Test d’intégration Auth-Service avec Redis ---
   integration-tests:
     runs-on: ubuntu-latest
+    env:
+      JWT_SECRET: c29sZHN0YWNrLWJhY2tlbmQtYXV0aGVudGlmaWNhdGlvbi1zZXJ2aWNlLXNlY3JldC1rZXk=
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
     needs: unit-tests
     services:
       redis:

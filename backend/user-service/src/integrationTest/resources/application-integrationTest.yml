@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: user-service-integration-test
+  main:
+    allow-bean-definition-overriding: true
+
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+
+jwt:
+  secret: c29sZHN0YWNrLWJhY2tlbmQtYXV0aGVudGlmaWNhdGlvbi1zZXJ2aWNlLXNlY3JldC1rZXk=

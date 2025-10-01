@@ -7,17 +7,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.Date;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -27,8 +33,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(properties = "spring.config.name=application-integrationTest-eureka")
+@SpringBootTest(properties = "spring.config.name=application-integrationTest")
 @AutoConfigureMockMvc
+@Import(UserIntegrationTest.IntegrationTestConfig.class)
 class UserIntegrationTest {
 
     @Autowired
@@ -40,12 +47,30 @@ class UserIntegrationTest {
     @MockitoBean
     private UserService userService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private String jwtToken;
+
+    @TestConfiguration
+    public static class IntegrationTestConfig {
+        @Value("${jwt.secret}")
+        private String jwtSecret;
+
+        @Bean
+        public RedisConnectionFactory redisConnectionFactory() {
+            return new LettuceConnectionFactory("localhost", 6379);
+        }
+
+        @Bean
+        public JwtUtil jwtUtil() {
+            return new JwtUtil(jwtSecret);
+        }
+
+    }
 
     @BeforeEach
     void setup() {
-        // Générer un token JWT valide pour les tests
-        JwtUtil jwtUtil = new JwtUtil("k3F7jN1pY9X2b6QvM+RZ4W8vU2y0nL6hD9y5a7E4fG8=");
         Instant now = Instant.now();
         Date expiration = Date.from(now.plus(1, ChronoUnit.HOURS));
         jwtToken = jwtUtil.generateToken("test@example.com", expiration);

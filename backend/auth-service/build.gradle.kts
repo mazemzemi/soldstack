@@ -20,10 +20,11 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok")
 
     // Tests
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
 
-    testImplementation("org.mockito:mockito-core") // La version est gérée par le BOM de Spring Boot
+    testImplementation("org.mockito:mockito-core")
     testImplementation("org.testcontainers:junit-jupiter")
 }
 
@@ -69,4 +70,11 @@ tasks.register<Test>("integrationTest") {
 // 🔹 Inclure dans le cycle de build standard
 tasks.check {
     dependsOn(tasks.named("integrationTest"))
+}
+
+tasks.named<ProcessResources>("processIntegrationTestResources") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+tasks.withType<ProcessResources> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

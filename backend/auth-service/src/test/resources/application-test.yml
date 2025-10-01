@@ -3,3 +3,7 @@ spring:
     redis:
       host: localhost
       port: 6379
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false

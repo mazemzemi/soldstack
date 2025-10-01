@@ -1,162 +1,325 @@
 {
   "info": {
-    "name": "SoldStack API",
-    "_postman_id": "user-auth-service",
-    "description": "Collection Postman pour tester auth-service et user-service",
+    "name": "SoldStack API Workflow",
+    "_postman_id": "d9e0f1a2-b3c4-5678-90ab-cdef12345678",
+    "description": "Workflow Auth & User Service avec endpoints mis à jour",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "auth_token",
+      "value": ""
+    },
+    {
+      "key": "user_ids",
+      "value": "[]"
+    }
+  ],
   "item": [
     {
-      "name": "Auth Service - Register",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"username\": \"ali\",\n  \"email\": \"ali@example.com\",\n  \"password\": \"securePass123\"\n}"
-        },
-        "url": {
-          "raw": "http://localhost:8080/api/auth/register",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "auth", "register"]
-        }
-      }
-    },
-    {
-      "name": "Auth Service - Login",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"ali@example.com\",\n  \"password\": \"securePass123\"\n}"
-        },
-        "url": {
-          "raw": "http://localhost:8080/api/auth/login",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "auth", "login"]
-        }
-      },
-      "event": [
+      "name": "Auth Service",
+      "item": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var jsonData = pm.response.json();",
-              "pm.environment.set(\"auth_token\", jsonData.token);"
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
-            "type": "text/javascript"
-          }
+            "url": {
+              "raw": "{{base_url}}/authentication/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "authentication",
+                "register"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"new_user\",\n  \"email\": \"new_user@example.com\",\n  \"password\": \"password123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Register returns 200', function() { pm.response.to.have.status(200); });",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('User id exists', function() { pm.expect(jsonData.id).to.exist; });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/authentication/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "authentication",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"new_user@example.com\",\n  \"password\": \"password123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login returns 200', function() { pm.response.to.have.status(200); });",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Token is present', function() { pm.expect(jsonData.token).to.exist; });",
+                  "pm.environment.set('auth_token', jsonData.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/authentication/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "authentication",
+                "logout"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Logout returns 200', function() { pm.response.to.have.status(200); });",
+                  "pm.environment.set('auth_token', '');"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
     {
-      "name": "Auth Service - Get Profile",
-      "request": {
-        "method": "GET",
-        "header": [
-          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
-        ],
-        "url": {
-          "raw": "http://localhost:8080/api/auth/me",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "auth", "me"]
-        }
-      }
-    },
-    {
-      "name": "User Service - Create User",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"username\": \"mohamed\",\n  \"email\": \"mohamed@example.com\"\n}"
-        },
-        "url": {
-          "raw": "http://localhost:8082/users",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8082",
-          "path": ["users"]
-        }
-      },
-      "event": [
+      "name": "User Service",
+      "item": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var jsonData = pm.response.json();",
-              "pm.environment.set(\"user_id\", jsonData.id);"
+          "name": "Create Multiple Users",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
             ],
-            "type": "text/javascript"
-          }
+            "url": {
+              "raw": "{{base_url}}/utilisateurs",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "utilisateurs"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"user_{{Math.floor(Math.random()*10000)}}\",\n  \"email\": \"user_{{Math.floor(Math.random()*10000)}}@example.com\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Create User returns 200', function() { pm.response.to.have.status(200); });",
+                  "var jsonData = pm.response.json();",
+                  "var ids = JSON.parse(pm.environment.get('user_ids'));",
+                  "ids.push(jsonData.id);",
+                  "pm.environment.set('user_ids', JSON.stringify(ids));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/utilisateurs",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "utilisateurs"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Get All Users returns 200', function() { pm.response.to.have.status(200); });",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Response is array', function() { pm.expect(jsonData).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Each User by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/utilisateurs/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "utilisateurs",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var ids = JSON.parse(pm.environment.get('user_ids'));",
+                  "if (ids.length > 0) {",
+                  "    pm.variables.set('user_id', ids.shift());",
+                  "    pm.environment.set('user_ids', JSON.stringify(ids));",
+                  "} else {",
+                  "    postman.setNextRequest(null);",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Get User by ID returns 200', function() { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete All Users",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{auth_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/utilisateurs/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "utilisateurs",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var ids = JSON.parse(pm.environment.get('user_ids'));",
+                  "if (ids.length > 0) {",
+                  "    pm.variables.set('user_id', ids.shift());",
+                  "    pm.environment.set('user_ids', JSON.stringify(ids));",
+                  "} else {",
+                  "    postman.setNextRequest(null);",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Delete User returns 200', function() { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
         }
       ]
-    },
-    {
-      "name": "User Service - Get All Users",
-      "request": {
-        "method": "GET",
-        "header": [
-          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
-        ],
-        "url": {
-          "raw": "http://localhost:8082/users",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8082",
-          "path": ["users"]
-        }
-      }
-    },
-    {
-      "name": "User Service - Get User By ID",
-      "request": {
-        "method": "GET",
-        "header": [
-          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
-        ],
-        "url": {
-          "raw": "http://localhost:8082/users/{{user_id}}",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8082",
-          "path": ["users", "{{user_id}}"]
-        }
-      }
-    },
-    {
-      "name": "User Service - Delete User",
-      "request": {
-        "method": "DELETE",
-        "header": [
-          { "key": "Authorization", "value": "Bearer {{auth_token}}" }
-        ],
-        "url": {
-          "raw": "http://localhost:8082/users/{{user_id}}",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8082",
-          "path": ["users", "{{user_id}}"]
-        }
-      }
     }
   ]
 }
