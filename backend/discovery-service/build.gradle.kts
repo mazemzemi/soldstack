@@ -5,17 +5,12 @@ plugins {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.cloud:spring-cloud-starter-gateway")
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
-    testImplementation("io.projectreactor:reactor-test")
 }
-
-
 
 dependencyManagement {
     imports {

@@ -8,6 +8,10 @@ dependencies {
     implementation(project(":common"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 
     implementation("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
@@ -16,6 +20,11 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2025.0.0")
+    }
+}
 // 🔹 Déclaration du nouveau sourceSet pour integrationTest
 sourceSets {
     create("integrationTest") {
@@ -49,3 +58,11 @@ tasks.register<Test>("integrationTest") {
     shouldRunAfter(tasks.test)
     useJUnitPlatform()
 }
+
+tasks.named<ProcessResources>("processIntegrationTestResources") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+tasks.withType<ProcessResources> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+

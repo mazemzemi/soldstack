@@ -42,15 +42,23 @@ jobs:
       # --- Tests Unitaires ---
       - name: Run unit tests for auth-service
         working-directory: ./backend
-        run: ./gradlew :auth-service:test --scan --no-daemon  --info --stacktrace
+        run: ./gradlew :auth-service:test --scan --no-daemon --info --stacktrace
 
       - name: Run unit tests for user-service
         working-directory: ./backend
-        run: ./gradlew :user-service:test --scan --no-daemon  --info --stacktrace
+        run: ./gradlew :user-service:test --scan --no-daemon --info --stacktrace
+
+      - name: Run unit tests for gateway-service
+        working-directory: ./backend
+        run: ./gradlew :gateway-service:test --scan --no-daemon --info --stacktrace
+
+      - name: Run unit tests for discovery-service
+        working-directory: ./backend
+        run: ./gradlew :discovery-service:test --scan --no-daemon --info --stacktrace
 
       - name: Run unit tests for common
         working-directory: ./backend
-        run: ./gradlew :common:test --scan --no-daemon  --info --stacktrace
+        run: ./gradlew :common:test --scan --no-daemon --info --stacktrace
 
       # --- Upload des rapports unitaires ---
       - name: Upload unit test reports
@@ -97,12 +105,17 @@ jobs:
       # --- Tests d’intégration pour auth-service ---
       - name: Run integration tests for auth-service
         working-directory: ./backend
-        run: ./gradlew :auth-service:integrationTest --scan --no-daemon   --info --stacktrace
+        run: ./gradlew :auth-service:integrationTest --scan --no-daemon --info --stacktrace
 
       # --- Tests d’intégration pour user-service ---
       - name: Run integration tests for user-service
         working-directory: ./backend
-        run: ./gradlew :user-service:integrationTest --scan --no-daemon   --info --stacktrace
+        run: ./gradlew :user-service:integrationTest --scan --no-daemon --info --stacktrace
+
+      # --- Tests d’intégration pour gateway-service ---
+      - name: Run integration tests for gateway-service
+        working-directory: ./backend
+        run: ./gradlew :gateway-service:integrationTest --scan --no-daemon --info --stacktrace
 
       # --- Upload des rapports d’intégration ---
       - name: Upload integration test reports
@@ -110,8 +123,8 @@ jobs:
         with:
           name: integration-test-reports
           path: |
-            backend/auth-service/build/reports/tests/integrationTest
-            backend/auth-service/build/test-results/integrationTest
+            backend/**/build/reports/tests/integrationTest
+            backend/**/build/test-results/integrationTest
 
   # --- Stage 3 : Build JARs ---
   build-jars:
@@ -144,9 +157,13 @@ jobs:
         working-directory: ./backend
         run: ./gradlew :user-service:bootJar --scan --no-daemon
 
-#      - name: Build gateway-service JAR
-#        working-directory: ./backend
-#        run: ./gradlew :gateway-service:bootJar --no-daemon
+      - name: Build gateway-service JAR
+        working-directory: ./backend
+        run: ./gradlew :gateway-service:bootJar --scan --no-daemon
+
+      - name: Build discovery-service JAR
+        working-directory: ./backend
+        run: ./gradlew :discovery-service:bootJar --scan --no-daemon
 
       - name: Upload JAR artifacts
         uses: actions/upload-artifact@v4
@@ -156,3 +173,4 @@ jobs:
             backend/auth-service/build/libs/*.jar
             backend/user-service/build/libs/*.jar
             backend/gateway-service/build/libs/*.jar
+            backend/discovery-service/build/libs/*.jar

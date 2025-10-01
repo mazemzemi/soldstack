@@ -6,14 +6,11 @@ import com.mazemzemi.soldstack.auth.domain.model.User;
 import com.mazemzemi.soldstack.common.exception.ConflictException;
 import com.mazemzemi.soldstack.common.exception.InvalidCredentialsException;
 import com.mazemzemi.soldstack.common.exception.NotFoundException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import com.mazemzemi.soldstack.common.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -21,14 +18,12 @@ import java.util.Date;
 @Service
 public class AuthService {
 
-
     public static final long TTL_SECONDS_ONE_HOUR = 3600;
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenStore tokenStore;
-    private final Key signingKey;
-
+    private final JwtUtil jwtUtil;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
@@ -37,9 +32,7 @@ public class AuthService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenStore = tokenStore;
-
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
-        this.signingKey = Keys.hmacShaKeyFor(keyBytes);
+        this.jwtUtil = new JwtUtil(jwtSecret);
     }
 
     public String login(String email, String password) {
@@ -51,16 +44,12 @@ public class AuthService {
         }
 
         final Instant now = Instant.now();
+        final Date expiration = Date.from(now.plus(TTL_SECONDS_ONE_HOUR, ChronoUnit.SECONDS));
 
+        // Génération du JWT avec JwtUtil
+        String token = jwtUtil.generateToken(user.getEmail(), expiration);
 
-        String token = Jwts.builder()
-                .subject(user.getEmail())
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plus(TTL_SECONDS_ONE_HOUR, ChronoUnit.SECONDS)))
-                .signWith(signingKey)
-                .compact();
-
-
+        // Stockage du token (optionnel si tu fais du blacklist / logout)
         tokenStore.storeToken(user.getEmail(), token, TTL_SECONDS_ONE_HOUR);
 
         return token;
@@ -85,11 +74,6 @@ public class AuthService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User", email));
     }
-
-   /* public boolean validate(String email, String token) {
-        String storedToken = tokenStore.getToken(email);
-        return storedToken != null && storedToken.equals(token);
-    }*/
 
     public void logout(String email) {
         tokenStore.removeToken(email);

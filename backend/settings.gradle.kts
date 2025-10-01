@@ -1,11 +1,12 @@
 rootProject.name = "backend"
+include("discovery-service")
 include("common")
 include("auth-service")
 include("user-service")
 include("gateway-service")
 
 plugins {
-    id("com.gradle.enterprise") version "3.19.2"
+    id("com.gradle.develocity") version "4.1.1"
 }
 
 develocity {

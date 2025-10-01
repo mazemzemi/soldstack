@@ -54,7 +54,7 @@ class AuthIntegrationTest {
     void register_shouldCreateUser() throws Exception {
         RegisterRequest request = new RegisterRequest("testuser_1", "test_1@example.com", "password123");
 
-        mockMvc.perform(post("/api/auth/register")
+        mockMvc.perform(post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -68,7 +68,7 @@ class AuthIntegrationTest {
         // Créer un utilisateur
         LoginRequest loginRequest = new LoginRequest("test@example.com", "password123");
 
-        mockMvc.perform(post("/api/auth/login")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
@@ -80,7 +80,7 @@ class AuthIntegrationTest {
     @WithMockUser(username = "test@example.com")
     void me_shouldReturnCurrentUser() throws Exception {
 
-        mockMvc.perform(get("/api/auth/me"))
+        mockMvc.perform(get("/api/v1/auth/me"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.data.username", is("test@example.com")))
@@ -91,7 +91,7 @@ class AuthIntegrationTest {
     @WithMockUser(username = "test@example.com")
     void logout_shouldSucceed() throws Exception {
 
-        mockMvc.perform(post("/api/auth/logout"))
+        mockMvc.perform(post("/api/v1/auth/logout"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)))
                 .andExpect(jsonPath("$.message").isNotEmpty());

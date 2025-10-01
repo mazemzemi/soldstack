@@ -28,4 +28,9 @@ subprojects {
     tasks.withType<Test> {
         useJUnitPlatform()
     }
+
+    dependencies {
+        implementation(platform("io.netty:netty-bom:4.2.6.Final"))
+        implementation(platform("com.thoughtworks.xstream:xstream:1.4.21"))
+    }
 }

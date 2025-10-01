@@ -1,9 +1,21 @@
 server:
   port: 8082
+jwt:
+  secret: c29sZHN0YWNrLWJhY2tlbmQtYXV0aGVudGlmaWNhdGlvbi1zZXJ2aWNlLXNlY3JldC1rZXk=
 
 spring:
   application:
     name: user-service
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
 
   # Désactiver toute config DataSource (puisqu’on n’utilise pas JPA ici)
   autoconfigure:

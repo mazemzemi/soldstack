@@ -1,0 +1,6 @@
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+jwt:
+  secret: k3F7jN1pY9X2b6QvM+RZ4W8vU2y0nL6hD9y5a7E4fG8=

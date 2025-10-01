@@ -5,3 +5,13 @@ spring:
     name: auth-service
 jwt:
   secret: c29sZHN0YWNrLWJhY2tlbmQtYXV0aGVudGlmaWNhdGlvbi1zZXJ2aWNlLXNlY3JldC1rZXk=
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
