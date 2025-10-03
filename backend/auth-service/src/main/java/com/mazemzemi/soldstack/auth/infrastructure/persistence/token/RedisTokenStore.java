@@ -11,6 +11,8 @@ public class RedisTokenStore implements TokenStore {
 
     private final StringRedisTemplate redisTemplate;
 
+    private static final String BLACKLIST_PREFIX = "BLACKLIST_";
+
     public RedisTokenStore(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -30,6 +32,18 @@ public class RedisTokenStore implements TokenStore {
         redisTemplate.delete(buildKey(email));
     }
 
+    public void blacklistToken(String email, long ttlSeconds) {
+        redisTemplate.opsForValue().set(
+                BLACKLIST_PREFIX + getToken(email),
+                "true",
+                ttlSeconds,
+                TimeUnit.SECONDS
+        );
+    }
+
+    public boolean isBlacklisted(String token) {
+        return redisTemplate.hasKey(BLACKLIST_PREFIX + token);
+    }
     private String buildKey(String email) {
         return email;
     }

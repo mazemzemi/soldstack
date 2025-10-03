@@ -46,10 +46,8 @@ public class AuthService {
         final Instant now = Instant.now();
         final Date expiration = Date.from(now.plus(TTL_SECONDS_ONE_HOUR, ChronoUnit.SECONDS));
 
-        // Génération du JWT avec JwtUtil
         String token = jwtUtil.generateToken(user.getEmail(), expiration);
 
-        // Stockage du token (optionnel si tu fais du blacklist / logout)
         tokenStore.storeToken(user.getEmail(), token, TTL_SECONDS_ONE_HOUR);
 
         return token;
@@ -76,6 +74,6 @@ public class AuthService {
     }
 
     public void logout(String email) {
-        tokenStore.removeToken(email);
+        tokenStore.blacklistToken(email, TTL_SECONDS_ONE_HOUR);
     }
 }

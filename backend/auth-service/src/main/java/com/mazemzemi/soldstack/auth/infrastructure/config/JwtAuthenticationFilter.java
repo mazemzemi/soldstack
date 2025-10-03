@@ -1,5 +1,7 @@
 package com.mazemzemi.soldstack.auth.infrastructure.config;
 
+import com.mazemzemi.soldstack.auth.infrastructure.persistence.token.RedisTokenStore;
+import com.mazemzemi.soldstack.common.exception.UnauthorizedException;
 import com.mazemzemi.soldstack.common.security.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,19 +22,20 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
+    private final RedisTokenStore redisTokenStore;
     private final JwtUtil jwtUtil;
 
     public JwtAuthenticationFilter(UserDetailsService userDetailsService,
-                                   @Value("${jwt.secret}") String jwtSecret) {
+                                   @Value("${jwt.secret}") String jwtSecret, RedisTokenStore redisTokenStore) {
         this.userDetailsService = userDetailsService;
         this.jwtUtil = new JwtUtil(jwtSecret);
+        this.redisTokenStore = redisTokenStore;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -41,7 +44,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String jwt = authHeader.substring(7);
         final String userEmail = jwtUtil.extractUsername(jwt);
-
+        if (jwtUtil.isTokenValid(jwt)) {
+            if (redisTokenStore.isBlacklisted(jwt)) {
+                throw new UnauthorizedException("Token invalide ou déjà expiré.");
+            }
+        }
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
             if (jwtUtil.isTokenValid(jwt)) {

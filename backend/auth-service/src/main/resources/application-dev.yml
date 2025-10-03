@@ -1,0 +1,20 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: auth-service
+  data:
+    redis:
+      host: localhost
+      port: 6379
+jwt:
+  secret: c29sZHN0YWNrLWJhY2tlbmQtYXV0aGVudGlmaWNhdGlvbi1zZXJ2aWNlLXNlY3JldC1rZXk=
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: false
+    fetch-registry: false
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
