@@ -70,6 +70,7 @@ solidstack/
 
 - [Java 24](https://openjdk.org/projects/jdk/24/)
 - [Spring Boot 3.5.6](https://spring.io/projects/spring-boot)
+- [Angular 20](https://angular.io/)
 - [Gradle 9.1.0](https://gradle.org/)
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
@@ -177,7 +178,8 @@ La pipeline GitHub Actions est disponible dans `.github/workflows/ci.yml` :
 ## 🛠️ Technologies principales
 
 - **Langage** : Java 24
-- **Framework** : Spring Boot 3.5.6
+- **Framework back-end** : Spring Boot 3.5.6
+- **Framework front-end** : Angular 20
 - **Authentification** : JWT + Spring Security
 - **Base de données** : Base en mémoire (H2 / tests)
 - **Cache** : Redis

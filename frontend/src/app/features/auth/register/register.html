@@ -1,0 +1,28 @@
+<div class="register-container">
+  <h2>Inscription</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onRegister()">
+    <div>
+      <input type="text" formControlName="username" placeholder="Nom d'utilisateur" required />
+      <div *ngIf="form.get('username')?.invalid && form.get('username')?.touched" class="error">
+        Le nom d'utilisateur est obligatoire.
+      </div>
+    </div>
+
+    <div>
+      <input type="email" formControlName="email" placeholder="Email" required />
+      <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="error">
+        Email invalide.
+      </div>
+    </div>
+
+    <div>
+      <input type="password" formControlName="password" placeholder="Mot de passe" required />
+      <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="error">
+        Le mot de passe est obligatoire (min. 6 caractères).
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="form.invalid">S’inscrire</button>
+  </form>
+</div>

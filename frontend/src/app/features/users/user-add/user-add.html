@@ -1,0 +1,16 @@
+<div class="user-add-container">
+  <h2>Ajouter un utilisateur</h2>
+
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <label>Nom d'utilisateur</label>
+    <input type="text" formControlName="username" />
+
+    <label>Email</label>
+    <input type="email" formControlName="email" />
+
+    <button type="submit" [disabled]="isSubmitting">Créer</button>
+  </form>
+
+  <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+</div>

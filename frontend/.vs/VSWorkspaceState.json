@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\app",
+    "\\src\\app\\core",
+    "\\src\\app\\features",
+    "\\src\\app\\features\\users",
+    "\\src\\app\\features\\users\\users-list",
+    "\\src\\environments"
+  ],
+  "SelectedNode": "\\src\\app\\features\\users\\users-list\\users-list.ts",
+  "PreviewInSolutionExplorer": false
+}

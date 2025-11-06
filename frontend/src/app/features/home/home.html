@@ -1,0 +1,14 @@
+<div class="home-container">
+  <h1>Bienvenue sur SolidStack</h1>
+
+  <ng-container *ngIf="(isLoggedIn$ | async); else guestLinks">
+    <button (click)="logout()">Se d&eacuteconnecter</button>
+  </ng-container>
+
+  <ng-template #guestLinks>
+    <div class="links">
+      <a routerLink="/login">Login</a>
+      <a routerLink="/register">Register</a>
+    </div>
+  </ng-template>
+</div>

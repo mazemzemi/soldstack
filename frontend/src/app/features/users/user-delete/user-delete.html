@@ -1,0 +1,10 @@
+<div class="user-delete-container">
+  <h2>Suppression d’un utilisateur</h2>
+
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+
+  <p>Êtes-vous sûr de vouloir supprimer l’utilisateur ID {{ userId }} ?</p>
+
+  <button (click)="deleteUser()">Oui, supprimer</button>
+  <button (click)="cancel()">Annuler</button>
+</div>
