@@ -61,8 +61,8 @@ public class AuthService {
         User newUser = User.builder()
                 .username(username)
                 .email(email)
-                .role("USER")
                 .password(passwordEncoder.encode(password))
+                .role("USER")
                 .build();
 
         return userRepository.save(newUser);
