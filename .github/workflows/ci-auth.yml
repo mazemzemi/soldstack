@@ -22,7 +22,11 @@ jobs:
         with:
           distribution: temurin
           java-version: "24"
-
+          
+      - name: Make gradlew executable
+        working-directory: backend
+        run: chmod +x gradlew
+        
       - name: Build Auth Service
         working-directory: backend
         run: ./gradlew :backend:auth-service:build
