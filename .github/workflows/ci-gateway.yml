@@ -1,0 +1,27 @@
+name: CI - Gateway Service
+
+on:
+  push:
+    paths:
+      - "backend/gateway-service/**"
+      - "backend/common/**"
+  pull_request:
+    paths:
+      - "backend/gateway-service/**"
+      - "backend/common/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "24"
+
+      - name: Build Gateway Service
+        run: ./gradlew :backend:gateway-service:build
