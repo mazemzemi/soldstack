@@ -24,4 +24,5 @@ jobs:
           java-version: "24"
 
       - name: Build Auth Service
+        working-directory: backend
         run: ./gradlew :backend:auth-service:build
